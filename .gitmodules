@@ -1,0 +1,3 @@
+[submodule "laven"]
+	path = laven
+	url = https://github.com/SettingDust/laven
