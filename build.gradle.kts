@@ -1,3 +1,5 @@
+import com.diffplug.gradle.spotless.SpotlessApply
+
 plugins {
     val kotlinVersion = "1.4.0-rc"
     kotlin("jvm") version kotlinVersion
@@ -36,21 +38,24 @@ repositories {
     maven("https://repo.codemc.org/repository/maven-public")
 }
 
-val shadow by configurations.named("shadow")
-
 dependencies {
     api(kotlin("stdlib-jdk8"))
+    api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.8")
 
     val sponge = "org.spongepowered:spongeapi:7.2.0"
     kapt(sponge)
     api(sponge)
 
     val laven = "me.settingdust:laven:latest"
-    shadow(laven) {
-        exclude("org.jetbrains.kotlin")
+    shadow(laven)
+    api(laven)
+
+    val configurateKotlin = "org.spongepowered:configurate-ext-kotlin:3.7.1"
+    shadow(configurateKotlin) {
+        exclude("org.spongepowered")
     }
-    api(laven) {
-        exclude("org.jetbrains.kotlin")
+    implementation(configurateKotlin) {
+        exclude("org.spongepowered")
     }
 }
 
@@ -78,6 +83,9 @@ tasks {
     }
     compileTestKotlin {
         kotlinOptions.jvmTarget = "1.8"
+    }
+    build {
+        dependsOn(withType<SpotlessApply>())
     }
 }
 
