@@ -1,7 +1,7 @@
 import com.diffplug.gradle.spotless.SpotlessApply
 
 plugins {
-    val kotlinVersion = "1.4.0-rc"
+    val kotlinVersion = "1.4.0"
     kotlin("jvm") version kotlinVersion
     kotlin("kapt") version kotlinVersion
 
