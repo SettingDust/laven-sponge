@@ -32,31 +32,17 @@ version = {
 }()
 
 repositories {
-    maven("https://dl.bintray.com/kotlin/kotlin-eap")
     mavenCentral()
     maven("https://repo.spongepowered.org/maven/")
     maven("https://repo.codemc.org/repository/maven-public")
 }
 
 dependencies {
-    api(kotlin("stdlib-jdk8"))
-    api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.8")
-
-    val sponge = "org.spongepowered:spongeapi:7.2.0"
-    kapt(sponge)
-    api(sponge)
+    api("org.spongepowered:spongeapi:7.2.0")
 
     val laven = "me.settingdust:laven:latest"
     shadow(laven)
     api(laven)
-
-    val configurateKotlin = "org.spongepowered:configurate-ext-kotlin:3.7.1"
-    shadow(configurateKotlin) {
-        exclude("org.spongepowered")
-    }
-    implementation(configurateKotlin) {
-        exclude("org.spongepowered")
-    }
 }
 
 publishing {
