@@ -38,6 +38,7 @@ repositories {
 }
 
 dependencies {
+    kotlin("stdlib-jdk8", "1.4.0")
     api("org.spongepowered:spongeapi:7.2.0")
 
     val laven = "me.settingdust:laven:latest"
