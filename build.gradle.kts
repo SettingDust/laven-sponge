@@ -1,47 +1,44 @@
-import com.diffplug.gradle.spotless.SpotlessApply
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
-    val kotlinVersion = "1.4.0"
-    kotlin("jvm") version kotlinVersion
-    kotlin("kapt") version kotlinVersion
+    kotlin("jvm") version "1.4.0"
 
     `maven-publish`
 
     id("com.github.johnrengelman.shadow") version "6.0.0"
-    id("com.diffplug.spotless") version "5.1.0"
 }
 
 val major = 1
 val minor = 0
 val patch = 0
 
-val mainVersion = arrayOf(major, minor, patch).joinToString(".")
-
 group = "me.settingdust"
-version = {
-    var version = mainVersion
-    val suffix = mutableListOf<String>("")
-    if (System.getenv("BUILD_NUMBER") != null) {
-        suffix += System.getenv("BUILD_NUMBER").toString()
-    }
-    if (System.getenv("GITHUB_REF") == null || System.getenv("GITHUB_REF").endsWith("-dev")) {
-        suffix += "unstable"
-    }
-    version += suffix.joinToString("-")
-    version
-}()
+version =
+    "${arrayOf(major, minor, patch).joinToString(".")}${
+        @OptIn(ExperimentalStdlibApi::class)
+        buildList {
+            add("")
+            if (System.getenv("BUILD_NUMBER") != null) {
+                add(System.getenv("BUILD_NUMBER").toString())
+            }
+            if (System.getenv("GITHUB_REF") == null || System.getenv("GITHUB_REF").endsWith("-dev")) {
+                add("unstable")
+            }
+        }.joinToString("-")
+    }"
 
 repositories {
     mavenCentral()
     maven("https://repo.spongepowered.org/maven/")
-    maven("https://repo.codemc.org/repository/maven-public")
 }
 
 dependencies {
-    kotlin("stdlib-jdk8", "1.4.0")
-    api("org.spongepowered:spongeapi:7.2.0")
+    implementation(kotlin("stdlib-jdk8", "1.4.0"))
 
-    val laven = "me.settingdust:laven:latest"
+    api("org.spongepowered:spongeapi:7.3.0")
+    api("org.spongepowered:configurate-ext-kotlin:3.7.1")
+
+    val laven = create("me.settingdust:laven:latest")
     shadow(laven)
     api(laven)
 }
@@ -71,17 +68,15 @@ tasks {
     compileTestKotlin {
         kotlinOptions.jvmTarget = "1.8"
     }
-    build {
-        dependsOn(withType<SpotlessApply>())
+    named<ShadowJar>("shadowJar") {
+        configurations = listOf(project.configurations.getByName("shadow"))
+        archiveClassifier.set("")
+        exclude("META-INF/**")
     }
-}
-
-spotless {
-    val ktlintVersion = "0.37.2"
-    kotlin {
-        ktlint(ktlintVersion)
+    named<Jar>("jar") {
+        enabled = false
     }
-    kotlinGradle {
-        ktlint(ktlintVersion)
+    named<Task>("build") {
+        dependsOn("shadowJar")
     }
 }

@@ -1,5 +1,3 @@
-@file:Suppress("UnstableApiUsage")
-
 package me.settingdust.laven.sponge
 
 import org.spongepowered.api.service.ServiceManager

@@ -1,6 +1,6 @@
 @file:Suppress("UnstableApiUsage")
 
-package me.settingdust.laven.sponge
+package me.settingdust.laven
 
 import com.google.common.reflect.TypeToken
 import com.google.inject.Injector
