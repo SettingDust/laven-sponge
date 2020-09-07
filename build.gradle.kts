@@ -35,12 +35,14 @@ repositories {
 dependencies {
     implementation(kotlin("stdlib-jdk8", "1.4.0"))
 
-    api("org.spongepowered:spongeapi:7.3.0")
-    api("org.spongepowered:configurate-ext-kotlin:3.7.1")
+    implementation("org.spongepowered:spongeapi:7.3.0")
 
-    val laven = create("me.settingdust:laven:latest")
-    shadow(laven)
+    api("org.spongepowered:configurate-ext-kotlin:3.7.1")
+    val laven = "me.settingdust:laven:latest"
     api(laven)
+    shadow(laven) {
+        exclude("org.jetbrains.kotlin")
+    }
 }
 
 publishing {
@@ -62,21 +64,15 @@ publishing {
 }
 
 tasks {
-    compileKotlin {
-        kotlinOptions.jvmTarget = "1.8"
-    }
-    compileTestKotlin {
-        kotlinOptions.jvmTarget = "1.8"
-    }
-    named<ShadowJar>("shadowJar") {
-        configurations = listOf(project.configurations.getByName("shadow"))
+    compileKotlin { kotlinOptions.jvmTarget = "1.8" }
+    compileTestKotlin { kotlinOptions.jvmTarget = "1.8" }
+    jar { enabled = false }
+    shadowJar {
         archiveClassifier.set("")
+        configurations = listOf(project.configurations.shadow.get())
+
+        artifacts.archives(archiveFile) { builtBy(shadowJar) }
+
         exclude("META-INF/**")
-    }
-    named<Jar>("jar") {
-        enabled = false
-    }
-    named<Task>("build") {
-        dependsOn("shadowJar")
     }
 }
