@@ -10,7 +10,7 @@ plugins {
 
 val major = 1
 val minor = 0
-val patch = 0
+val patch = 2
 
 group = "me.settingdust"
 version =
