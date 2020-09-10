@@ -38,7 +38,7 @@ dependencies {
     implementation("org.spongepowered:spongeapi:7.3.0")
 
     api("org.spongepowered:configurate-ext-kotlin:3.7.1")
-    val laven = "me.settingdust:laven:latest"
+    val laven = "me.settingdust:laven"
     api(laven)
     shadow(laven) {
         exclude("org.jetbrains.kotlin")
@@ -66,13 +66,10 @@ publishing {
 tasks {
     compileKotlin { kotlinOptions.jvmTarget = "1.8" }
     compileTestKotlin { kotlinOptions.jvmTarget = "1.8" }
-    jar { enabled = false }
+    jar { finalizedBy(shadowJar) }
     shadowJar {
         archiveClassifier.set("")
         configurations = listOf(project.configurations.shadow.get())
-
-        artifacts.archives(archiveFile) { builtBy(shadowJar) }
-
         exclude("META-INF/**")
     }
 }
