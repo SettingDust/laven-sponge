@@ -57,7 +57,11 @@ dependencies {
 
     implementation "org.spongepowered:spongeapi:7.3.0"
 
-    api "org.spongepowered:configurate-ext-kotlin:3.7.1"
+    api ("org.spongepowered:configurate-ext-kotlin:3.7.1") {
+        exclude group: "org.spongepowered"
+        exclude group: "org.jetbrains.kotlin"
+        exclude group: "org.jetbrains.kotlinx"
+    }
 
     def laven = project("laven")
     api laven
@@ -89,10 +93,6 @@ compileKotlin {
 }
 compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
-}
-jar {
-    actions = []
-    finalizedBy shadowJar
 }
 shadowJar {
     archiveClassifier.set("")
