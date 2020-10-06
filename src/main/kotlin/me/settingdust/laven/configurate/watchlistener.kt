@@ -7,6 +7,7 @@ import ninja.leaping.configurate.ConfigurationNode
 import ninja.leaping.configurate.loader.ConfigurationLoader
 import ninja.leaping.configurate.reactive.Disposable
 import ninja.leaping.configurate.reactive.Subscriber
+import ninja.leaping.configurate.reference.ConfigurationReference
 import ninja.leaping.configurate.reference.WatchServiceListener
 import java.nio.file.Path
 import java.nio.file.WatchEvent
@@ -27,7 +28,7 @@ class WatchServiceListenerCallback<T>(
     }
 }
 
-fun <T> Path.subcribe(
+fun <T> Path.subscribe(
     listener: WatchServiceListener,
     callback: WatchServiceListenerCallback<T>.() -> Unit
 ): Disposable {
@@ -44,19 +45,19 @@ fun <T> Path.subcribe(
     }
 }
 
-fun Path.subcribe(listener: WatchServiceListener): WatchingPropertyResourceBundle {
+fun Path.subscribe(listener: WatchServiceListener): WatchingPropertyResourceBundle {
     val path = absolutePath
     val callback = WatchingPropertyResourceBundle(path)
-    subcribe<PropertyResourceBundle>(listener) {
+    subscribe<PropertyResourceBundle>(listener) {
         converter {
-            PropertyResourceBundle(path.openInputStream())
+            PropertyResourceBundle(path.openInputStream().bufferedReader())
         }
         callback(callback)
     }
     return callback
 }
 
-fun Path.subcribe(listener: WatchServiceListener, callback: Subscriber<WatchEvent<*>>): Disposable {
+fun Path.subscribe(listener: WatchServiceListener, callback: Subscriber<WatchEvent<*>>): Disposable {
     val path = absolutePath
     if (isDirectory) {
         return listener.listenToDirectory(path, callback)
@@ -65,10 +66,10 @@ fun Path.subcribe(listener: WatchServiceListener, callback: Subscriber<WatchEven
     }
 }
 
-fun <N : ConfigurationNode> Path.subcribe(
+fun <N : ConfigurationNode> Path.subscribe(
     listener: WatchServiceListener,
     loaderFunc: (Path) -> ConfigurationLoader<N>
-) = listener.listenToConfiguration(loaderFunc, this)
+): ConfigurationReference<N> = listener.listenToConfiguration(loaderFunc, this)
 
 class WatchingPropertyResourceBundle constructor(
     path: Path
@@ -82,7 +83,7 @@ class WatchingPropertyResourceBundle constructor(
 
     public override fun setParent(parent: ResourceBundle?) = super.setParent(parent)
 
-    public override fun handleGetObject(key: String): Any = propertyResourceBundle.handleGetObject(key)
+    public override fun handleGetObject(key: String): Any? = propertyResourceBundle.handleGetObject(key)
 
     override fun getKeys(): Enumeration<String> = propertyResourceBundle.keys
 

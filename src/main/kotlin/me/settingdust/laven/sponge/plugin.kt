@@ -2,9 +2,11 @@
 
 package me.settingdust.laven.sponge
 
+import me.settingdust.laven.unwrap
 import org.spongepowered.api.Sponge
 import org.spongepowered.api.event.Event
 import org.spongepowered.api.event.Order
+import org.spongepowered.api.network.ChannelBinding
 import org.spongepowered.api.plugin.PluginContainer
 import org.spongepowered.api.scheduler.Task
 import java.util.concurrent.TimeUnit
@@ -32,3 +34,12 @@ fun PluginContainer.task(
     timeUnit: TimeUnit = TimeUnit.MILLISECONDS,
     consumer: Task.() -> Unit
 ) = task(this, name, async, delay, interval, timeUnit, consumer)
+
+fun PluginContainer.getOrCreateRaw(channel: String = this.id): ChannelBinding.RawDataChannel =
+    Sponge.getChannelRegistrar().getOrCreateRaw(this, channel)
+
+fun PluginContainer.getOrCreate(channel: String = this.id): ChannelBinding.IndexedMessageChannel =
+    Sponge.getChannelRegistrar().getOrCreate(this, channel)
+
+fun PluginContainer.getChannel(channel: String = this.id): ChannelBinding? =
+    Sponge.getChannelRegistrar().getChannel(channel).unwrap()
