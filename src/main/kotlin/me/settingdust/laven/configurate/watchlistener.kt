@@ -59,14 +59,14 @@ fun Path.subscribe(listener: WatchServiceListener): WatchingPropertyResourceBund
 
 fun Path.subscribe(listener: WatchServiceListener, callback: Subscriber<WatchEvent<*>>): Disposable {
     val path = absolutePath
-    if (isDirectory) {
-        return listener.listenToDirectory(path, callback)
+    return if (isDirectory) {
+        listener.listenToDirectory(path, callback)
     } else {
-        return listener.listenToFile(path, callback)
+        listener.listenToFile(path, callback)
     }
 }
 
-fun <N : ConfigurationNode> Path.subscribe(
+fun <N : ConfigurationNode> Path.subscribeAsConfiguration(
     listener: WatchServiceListener,
     loaderFunc: (Path) -> ConfigurationLoader<N>
 ): ConfigurationReference<N> = listener.listenToConfiguration(loaderFunc, this)

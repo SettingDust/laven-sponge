@@ -4,6 +4,7 @@ package me.settingdust.laven.sponge
 
 import me.settingdust.laven.unwrap
 import org.spongepowered.api.Sponge
+import org.spongepowered.api.command.CommandCallable
 import org.spongepowered.api.event.Event
 import org.spongepowered.api.event.Order
 import org.spongepowered.api.network.ChannelBinding
@@ -43,3 +44,6 @@ fun PluginContainer.getOrCreate(channel: String = this.id): ChannelBinding.Index
 
 fun PluginContainer.getChannel(channel: String = this.id): ChannelBinding? =
     Sponge.getChannelRegistrar().getChannel(channel).unwrap()
+
+fun PluginContainer.registerCommand(commandCallable: CommandCallable, vararg alias: String) =
+    Sponge.getCommandManager().register(this, commandCallable, *alias)
